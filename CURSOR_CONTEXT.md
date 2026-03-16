@@ -34,7 +34,7 @@
 | AI agent framework | Google ADK (google-adk) |
 | Live voice AI | Gemini Live API via google-genai |
 | Image generation | Imagen 3 via Vertex AI (imagegeneration@006) |
-| Image storage | Google Cloud Storage (bucket: kidtutor-images) |
+| Image storage | Google Cloud Storage (bucket: kidtutor-images-v2) |
 | Session state | Firestore |
 | Hosting | Google Cloud Run |
 | Frontend | Vanilla HTML + CSS + JavaScript (no React, no Vue) |
@@ -47,9 +47,9 @@
 
 ```
 GOOGLE_API_KEY=<from AI Studio>
-GOOGLE_CLOUD_PROJECT=kidtutor-live
+GOOGLE_CLOUD_PROJECT=kidtutor-v2
 GOOGLE_CLOUD_LOCATION=us-central1
-GCS_BUCKET=kidtutor-images
+GCS_BUCKET=kidtutor-images-v2
 GOOGLE_GENAI_USE_VERTEXAI=FALSE
 ```
 
@@ -58,7 +58,7 @@ GOOGLE_GENAI_USE_VERTEXAI=FALSE
 ## Project File Structure — Do Not Reorganise
 
 ```
-kidtutor-live/
+kidtutor-v2/
 ├── backend/
 │   ├── main.py                  # FastAPI app + WebSocket endpoints
 │   ├── agents/
@@ -140,7 +140,7 @@ Emotion states: `neutral` | `happy` | `thinking` | `surprised` | `question`
     {
       "id": "img_1",
       "teaching_moment": "what a fraction is",
-      "gcs_url": "https://storage.googleapis.com/kidtutor-images/abc123/img_1.png",
+      "gcs_url": "https://storage.googleapis.com/kidtutor-images-v2/abc123/img_1.png",
       "teaching_notes": "Use to show numerator/denominator",
       "can_reuse_for": ["what does the bottom number mean", "equal parts"]
     }
@@ -288,13 +288,13 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
 
 ### Cloud Run deploy command
 ```bash
-gcloud run deploy kidtutor-live \
+gcloud run deploy kidtutor-v2 \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars GOOGLE_API_KEY=$GOOGLE_API_KEY,GCS_BUCKET=kidtutor-images,GOOGLE_CLOUD_PROJECT=kidtutor-live \
+  --set-env-vars GOOGLE_API_KEY=$GOOGLE_API_KEY,GCS_BUCKET=kidtutor-images-v2,GOOGLE_CLOUD_PROJECT=kidtutor-v2 \
   --memory 1Gi \
-  --project kidtutor-live
+  --project kidtutor-v2
 ```
 
 ---
