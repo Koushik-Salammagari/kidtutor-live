@@ -1,0 +1,22 @@
+# KidTutor Live — CURSOR_CONTEXT.md stack
+# Backend: FastAPI, Google ADK, Gemini Live via google-genai, Vertex AI auth (no API key)
+# Project: kidtutor-v2, bucket: kidtutor-images-v2
+
+# Web
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+
+# AI: Gemini Live API + Vertex AI (no API key; uses ADC)
+google-genai>=1.0.0
+
+# Agent framework (CURSOR_CONTEXT: Google ADK)
+google-adk>=1.27.0
+
+# GCP: Firestore, GCS, auth, Vertex AI (Imagen 3)
+google-cloud-firestore>=2.19.0
+google-cloud-storage>=2.18.0
+google-auth>=2.35.0
+google-cloud-aiplatform>=1.38.0
+
+# App
+pydantic>=2.0.0
