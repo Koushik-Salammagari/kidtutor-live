@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KidTutor Live — Lesson</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Nunito', 'Comic Sans MS', sans-serif;
+      color: #e8e8f0;
+      overflow: hidden;
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .main-row {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Left 35% — Character */
+    .character-panel {
+      width: 35%;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      position: relative;
+    }
+
+    .character-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .character-wrap.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .character-svg {
+      max-width: 95%;
+      width: 320px;
+      max-height: 70vh;
+      height: 360px;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+      flex-shrink: 0;
+    }
+
+    /* Speech bubble (Zara) */
+    .speech-bubble {
+      position: relative;
+      background: #fff;
+      color: #1a1a2e;
+      padding: 12px 18px;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      max-width: 220px;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      opacity: 0;
+      transform: scale(0.7) translateY(10px);
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      margin-left: -10px;
+      border-width: 12px 10px 0;
+      border-style: solid;
+      border-color: #fff transparent transparent;
+    }
+    .character-wrap.visible .speech-bubble.bubble-in {
+      animation: bubbleIn 0.6s ease-out forwards;
+    }
+    @keyframes bubbleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.7) translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* Right 65% — Teaching board */
+    .board-panel {
+      width: 65%;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 0.5rem;
+    }
+
+    .teaching-board {
+      flex: 1;
+      background: linear-gradient(145deg, #16213e 0%, #1a1a2e 100%);
+      border-radius: 16px;
+      border: 3px solid #7f77dd;
+      box-shadow: inset 0 0 40px rgba(127,119,221,0.15), 0 8px 32px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .board-image-slot {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .board-image-slot img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .board-image-slot img.slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .board-placeholder {
+      color: #6b6b8a;
+      font-size: 1.2rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      color: #fff;
+      font-size: 1rem;
+      text-align: center;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0 0 12px 12px;
+    }
+    .overlay-text:empty { display: none; }
+
+    /* Bottom bar */
+    .bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(0,0,0,0.25);
+      border-top: 2px solid rgba(127,119,221,0.4);
+    }
+
+    .mic-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid #7f77dd;
+      background: #2d2d44;
+      color: #e8e8f0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+    }
+    .mic-btn:hover {
+      background: #3d3d5c;
+      transform: scale(1.05);
+    }
+    .mic-btn.listening {
+      background: #7f77dd;
+      box-shadow: 0 0 20px rgba(127,119,221,0.6);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(127,119,221,0.6); }
+      50% { box-shadow: 0 0 32px rgba(127,119,221,0.9); }
+    }
+
+    .status-text {
+      font-size: 0.95rem;
+      color: #a0a0b8;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .thumbnails {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      border: 2px solid #4a4e8c;
+      background: #2d2d44;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .thumb:hover {
+      border-color: #7f77dd;
+      transform: scale(1.05);
+    }
+    .thumb.active {
+      border-color: #7f77dd;
+      box-shadow: 0 0 12px rgba(127,119,221,0.5);
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumb .thumb-placeholder {
+      font-size: 0.7rem;
+      color: #6b6b8a;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="main-row">
+      <aside class="character-panel">
+        <div id="zara-wrap" class="character-wrap visible" data-character="zara">
+          <div class="speech-bubble bubble-in" id="zara-speech-bubble">Hi! I'm Zara! Let's learn together!</div>
+          <svg id="zara-svg" class="character-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Zara the Robot - purple #4A4E8C, #7F77DD -->
+            <defs>
+              <linearGradient id="zara-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#5a5e9c"/>
+                <stop offset="100%" style="stop-color:#4A4E8C"/>
+              </linearGradient>
+              <linearGradient id="zara-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#9f97ee"/>
+                <stop offset="100%" style="stop-color:#7F77DD"/>
+              </linearGradient>
+            </defs>
+            <!-- body -->
+            <rect x="60" y="100" width="80" height="100" rx="12" fill="url(#zara-body)"/>
+            <rect x="70" y="110" width="60" height="30" rx="4" fill="#2d2d44"/>
+            <circle cx="85" cy="125" r="6" fill="#7F77DD" class="zara-eye left"/>
+            <circle cx="115" cy="125" r="6" fill="#7F77DD" class="zara-eye right"/>
+            <circle cx="87" cy="124" r="2" fill="#1a1a2e" class="zara-pupil left"/>
+            <circle cx="117" cy="124" r="2" fill="#1a1a2e" class="zara-pupil right"/>
+            <!-- mouth: ellipse for lip sync -->
+            <ellipse id="zara-mouth" cx="100" cy="142" rx="12" ry="3" fill="#3d3d5c"/>
+            <!-- antenna -->
+            <line x1="100" y1="55" x2="100" y2="30" stroke="#7F77DD" stroke-width="4"/>
+            <circle cx="100" cy="26" r="8" fill="url(#zara-accent)"/>
+            <!-- arms -->
+            <rect x="35" y="120" width="22" height="14" rx="4" fill="url(#zara-body)" transform="rotate(-20 46 127)"/>
+            <rect x="143" y="120" width="22" height="14" rx="4" fill="url(#zara-body)" transform="rotate(20 154 127)"/>
+          </svg>
+        </div>
+        <div id="finn-wrap" class="character-wrap" data-character="finn">
+          <svg id="finn-svg" class="character-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Finn the Fox - #D85A30, #F5C4B3 -->
+            <defs>
+              <linearGradient id="finn-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#e86a40"/>
+                <stop offset="100%" style="stop-color:#D85A30"/>
+              </linearGradient>
+              <linearGradient id="finn-belly" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#fff"/>
+                <stop offset="100%" style="stop-color:#F5C4B3"/>
+              </linearGradient>
+            </defs>
+            <!-- ears -->
+            <path d="M 70 75 L 55 35 L 85 70 Z" fill="#D85A30"/>
+            <path d="M 130 75 L 145 35 L 115 70 Z" fill="#D85A30"/>
+            <!-- head -->
+            <ellipse cx="100" cy="95" rx="45" ry="42" fill="url(#finn-body)"/>
+            <ellipse cx="100" cy="105" rx="28" ry="25" fill="url(#finn-belly)"/>
+            <!-- eyes -->
+            <ellipse cx="82" cy="88" rx="8" ry="10" fill="#1a1a2e" class="finn-eye left"/>
+            <ellipse cx="118" cy="88" rx="8" ry="10" fill="#1a1a2e" class="finn-eye right"/>
+            <!-- mouth -->
+            <path id="finn-mouth" d="M 88 108 Q 100 118 112 108" stroke="#8b4512" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse id="finn-tongue" cx="100" cy="118" rx="6" ry="8" fill="#e8a098" style="display:none"/>
+            <!-- nose -->
+            <ellipse cx="100" cy="102" rx="5" ry="4" fill="#5c3317"/>
+            <!-- body -->
+            <ellipse cx="100" cy="185" rx="50" ry="45" fill="url(#finn-body)"/>
+            <path d="M 55 165 Q 100 200 145 165 L 145 210 Q 100 245 55 210 Z" fill="url(#finn-belly)"/>
+          </svg>
+        </div>
+      </aside>
+
+      <section class="board-panel">
+        <div class="teaching-board">
+          <div class="board-image-slot">
+            <div class="board-placeholder" id="board-placeholder">Image will appear here</div>
+            <img id="board-image" alt="" style="display:none" />
+            <div class="overlay-text" id="overlay-text"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="bottom-bar">
+      <button type="button" class="mic-btn" id="mic-btn" aria-label="Microphone">🎤</button>
+      <span class="status-text" id="status-text">Tap the mic to talk · Space: demo</span>
+      <div class="thumbnails" id="thumbnails">
+        <button type="button" class="thumb" data-id="img_1" title="Image 1"><span class="thumb-placeholder">1</span></button>
+        <button type="button" class="thumb" data-id="img_2" title="Image 2"><span class="thumb-placeholder">2</span></button>
+        <button type="button" class="thumb" data-id="img_3" title="Image 3"><span class="thumb-placeholder">3</span></button>
+        <button type="button" class="thumb" data-id="img_4" title="Image 4"><span class="thumb-placeholder">4</span></button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ——— Character API (Zara / Finn, lip sync + emotions) ———
+      var currentCharacter = 'zara';
+      var currentEmotion = 'neutral';
+      var volume = 0;
+      var mouthShape = 'closed'; // closed | sm | md | lg | smile
+
+      function getMouthShapeFromVolume(vol) {
+        if (vol <= 20) return 'closed';
+        if (vol <= 45) return 'sm';
+        if (vol <= 70) return 'md';
+        return 'lg';
+      }
+
+      function setVolume(amplitude) {
+        volume = Math.min(100, Math.max(0, Math.round(amplitude)));
+        var shape = currentEmotion === 'happy' && volume < 20 ? 'smile' : getMouthShapeFromVolume(volume);
+        if (shape === mouthShape) return;
+        mouthShape = shape;
+        updateMouth();
+      }
+
+      function applyEmotion(state) {
+        currentEmotion = state || 'neutral';
+        if (volume < 20) {
+          mouthShape = currentEmotion === 'happy' ? 'smile' : (currentEmotion === 'thinking' ? 'sm' : 'closed');
+          updateMouth();
+        }
+        updateEyes();
+      }
+
+      function updateMouth() {
+        var zaraMouth = document.getElementById('zara-mouth');
+        var finnMouth = document.getElementById('finn-mouth');
+        if (currentCharacter === 'zara' && zaraMouth) {
+          var rx = 14, ry = 2;
+          if (mouthShape === 'sm') { rx = 12; ry = 6; }
+          else if (mouthShape === 'md') { rx = 12; ry = 10; }
+          else if (mouthShape === 'lg') { rx = 12; ry = 14; }
+          else if (mouthShape === 'smile') { rx = 16; ry = 4; }
+          zaraMouth.setAttribute('rx', rx);
+          zaraMouth.setAttribute('ry', ry);
+        }
+        if (currentCharacter === 'finn' && finnMouth) {
+          var d = 'M 88 108 Q 100 118 112 108';
+          if (mouthShape === 'sm') d = 'M 88 108 Q 100 114 112 108';
+          else if (mouthShape === 'md') d = 'M 85 108 Q 100 120 115 108';
+          else if (mouthShape === 'lg') { d = 'M 82 106 Q 100 125 118 106'; }
+          else if (mouthShape === 'smile') d = 'M 88 110 Q 100 102 112 110';
+          finnMouth.setAttribute('d', d);
+          var tongue = document.getElementById('finn-tongue');
+          if (tongue) tongue.style.display = mouthShape === 'lg' ? 'block' : 'none';
+        }
+      }
+
+      function updateEyes() {
+        var svg = document.getElementById(currentCharacter + '-svg');
+        if (!svg) return;
+        var left = svg.querySelector('.' + currentCharacter + '-eye.left');
+        var right = svg.querySelector('.' + currentCharacter + '-eye.right');
+        if (!left || !right) return;
+        if (currentEmotion === 'thinking') {
+          left.setAttribute('transform', 'translate(0, 4)');
+          right.setAttribute('transform', 'translate(0, 4)');
+        } else if (currentEmotion === 'surprised' && currentCharacter === 'zara') {
+          left.setAttribute('r', '8');
+          right.setAttribute('r', '8');
+          left.removeAttribute('transform');
+          right.removeAttribute('transform');
+        } else {
+          left.removeAttribute('transform');
+          right.removeAttribute('transform');
+          if (currentCharacter === 'zara' && left.hasAttribute('r')) {
+            left.setAttribute('r', '6');
+            right.setAttribute('r', '6');
+          }
+        }
+      }
+
+      function showCharacter(name) {
+        if (name !== 'zara' && name !== 'finn') return;
+        currentCharacter = name;
+        document.getElementById('zara-wrap').classList.toggle('visible', name === 'zara');
+        document.getElementById('finn-wrap').classList.toggle('visible', name === 'finn');
+        updateMouth();
+        updateEyes();
+      }
+
+      // Expose API for session.js / audio
+      window.setVolume = setVolume;
+      window.applyEmotion = applyEmotion;
+      window.showCharacter = showCharacter;
+
+      // ——— Teaching board ———
+      var boardImage = document.getElementById('board-image');
+      var boardPlaceholder = document.getElementById('board-placeholder');
+      var overlayText = document.getElementById('overlay-text');
+
+      function showBoardImage(id, src, overlay, transition) {
+        if (src) {
+          boardPlaceholder.style.display = 'none';
+          boardImage.style.display = 'block';
+          boardImage.src = src;
+          boardImage.alt = overlay || 'Teaching image';
+          boardImage.classList.remove('slide-in');
+          if (transition === 'slide_in' || transition === 'slide') {
+            void boardImage.offsetWidth;
+            boardImage.classList.add('slide-in');
+          }
+          overlayText.textContent = overlay || '';
+        } else {
+          boardPlaceholder.style.display = 'block';
+          boardImage.style.display = 'none';
+          overlayText.textContent = '';
+        }
+      }
+
+      window.showBoardImage = showBoardImage;
+      window.setOverlayText = function (text) { overlayText.textContent = text || ''; };
+
+      // ——— Thumbnails (demo: placeholder images or URLs from session) ———
+      var thumbImages = [];
+      var activeThumbId = null;
+
+      document.getElementById('thumbnails').addEventListener('click', function (e) {
+        var btn = e.target.closest('.thumb');
+        if (!btn) return;
+        var id = btn.getAttribute('data-id');
+        document.querySelectorAll('.thumb').forEach(function (t) { t.classList.remove('active'); });
+        btn.classList.add('active');
+        activeThumbId = id;
+        var src = thumbImages[id] || '';
+        showBoardImage(id, src, '', 'slide_in');
+      });
+
+      window.setThumbnailImages = function (items) {
+        thumbImages = {};
+        items.forEach(function (item) {
+          thumbImages[item.id] = item.gcs_url || item.url || '';
+        });
+        var thumbs = document.querySelectorAll('.thumb');
+        thumbs.forEach(function (thumb, i) {
+          var id = thumb.getAttribute('data-id');
+          var url = thumbImages[id];
+          thumb.innerHTML = url ? '<img src="' + url + '" alt="">' : '<span class="thumb-placeholder">' + (i + 1) + '</span>';
+        });
+      };
+
+      // ——— Mic button ———
+      var micBtn = document.getElementById('mic-btn');
+      var statusText = document.getElementById('status-text');
+      var listening = false;
+      var defaultStatus = 'Tap the mic to talk · Space: demo';
+
+      micBtn.addEventListener('click', function () {
+        listening = !listening;
+        micBtn.classList.toggle('listening', listening);
+        statusText.textContent = listening ? 'Listening...' : defaultStatus;
+      });
+
+      window.setStatusText = function (text) { statusText.textContent = text || defaultStatus; };
+
+      // ——— Demo mode: spacebar cycles emotions and simulates speaking ———
+      var emotions = ['neutral', 'happy', 'thinking', 'surprised', 'question'];
+      var emotionIndex = 0;
+      var demoSpeakInterval = null;
+
+      function demoCycleEmotion() {
+        emotionIndex = (emotionIndex + 1) % emotions.length;
+        applyEmotion(emotions[emotionIndex]);
+        statusText.textContent = 'Emotion: ' + emotions[emotionIndex];
+        setTimeout(function () { statusText.textContent = listening ? 'Listening...' : defaultStatus; }, 1500);
+      }
+
+      function demoSimulateSpeaking() {
+        if (demoSpeakInterval) return;
+        var frame = 0;
+        demoSpeakInterval = setInterval(function () {
+          frame++;
+          var t = (frame % 50) / 50;
+          var amp = Math.round(5 + 90 * Math.sin(t * Math.PI * 6));
+          setVolume(amp);
+          if (frame >= 100) {
+            clearInterval(demoSpeakInterval);
+            demoSpeakInterval = null;
+            setVolume(0);
+          }
+        }, 45);
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.code !== 'Space' || e.repeat) return;
+        e.preventDefault();
+        demoCycleEmotion();
+        demoSimulateSpeaking();
+      });
+    })();
+  </script>
+</body>
+</html>
