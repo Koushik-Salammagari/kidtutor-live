@@ -363,6 +363,13 @@
 
       // ——— Character API (Zara / Finn, lip sync + emotions) ———
       var currentCharacter = 'zara';
+      try {
+        var setupRaw = localStorage.getItem('kidtutor_setup');
+        var setup = setupRaw ? JSON.parse(setupRaw) : null;
+        if (setup && (setup.character === 'zara' || setup.character === 'finn')) {
+          currentCharacter = setup.character;
+        }
+      } catch (e) {}
       var currentEmotion = 'neutral';
       var volume = 0;
       var mouthShape = 'closed'; // closed | sm | md | lg | smile
@@ -447,6 +454,9 @@
         updateMouth();
         updateEyes();
       }
+
+      // Apply saved character from pick.html
+      showCharacter(currentCharacter);
 
       // Expose API for session.js / audio
       window.setVolume = setVolume;

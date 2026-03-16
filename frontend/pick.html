@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KidTutor Live — Pick your tutor!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Nunito', 'Comic Sans MS', sans-serif;
+      color: #e8e8f0;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+    }
+
+    .topic-badge {
+      display: inline-block;
+      background: linear-gradient(145deg, #4a4e8c 0%, #3d4180 100%);
+      color: #e8e8f0;
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border: 2px solid #7f77dd;
+      box-shadow: 0 4px 16px rgba(127, 119, 221, 0.3);
+    }
+
+    .topic-badge span {
+      color: #b8b8ff;
+    }
+
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 800;
+      margin: 0 0 2rem;
+      background: linear-gradient(135deg, #e8e8f0 0%, #b8b8d0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    .cards {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 260px;
+      max-width: 320px;
+      background: linear-gradient(165deg, #2d2d44 0%, #252538 100%);
+      border-radius: 24px;
+      padding: 1.75rem;
+      border: 3px solid #4a4e8c;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(127, 119, 221, 0.5);
+      border-color: #7f77dd;
+    }
+
+    .card.card-finn:hover {
+      box-shadow: 0 0 40px rgba(216, 90, 48, 0.45);
+      border-color: #e86a40;
+    }
+
+    .card-svg-wrap {
+      width: 180px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-svg-wrap svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35));
+    }
+
+    .card-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-zara .card-name { color: #b8b8ff; }
+    .card-finn .card-name { color: #ffb088; }
+
+    .card-tagline {
+      font-size: 0.95rem;
+      color: #a0a0b8;
+      line-height: 1.4;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p class="topic-badge" id="topic-badge">Today we're learning: <span id="topic-text">...</span></p>
+    <h1>Who's teaching you today?</h1>
+    <div class="cards">
+      <a href="#" class="card card-zara" id="card-zara" data-character="zara" role="button">
+        <div class="card-svg-wrap">
+          <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="zara-pick-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#5a5e9c"/>
+                <stop offset="100%" style="stop-color:#4A4E8C"/>
+              </linearGradient>
+              <linearGradient id="zara-pick-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#9f97ee"/>
+                <stop offset="100%" style="stop-color:#7F77DD"/>
+              </linearGradient>
+            </defs>
+            <rect x="60" y="100" width="80" height="100" rx="12" fill="url(#zara-pick-body)"/>
+            <rect x="70" y="110" width="60" height="30" rx="4" fill="#2d2d44"/>
+            <circle cx="85" cy="125" r="6" fill="#7F77DD"/>
+            <circle cx="115" cy="125" r="6" fill="#7F77DD"/>
+            <circle cx="87" cy="124" r="2" fill="#1a1a2e"/>
+            <circle cx="117" cy="124" r="2" fill="#1a1a2e"/>
+            <ellipse cx="100" cy="142" rx="12" ry="3" fill="#3d3d5c"/>
+            <line x1="100" y1="55" x2="100" y2="30" stroke="#7F77DD" stroke-width="4"/>
+            <circle cx="100" cy="26" r="8" fill="url(#zara-pick-accent)"/>
+            <rect x="35" y="120" width="22" height="14" rx="4" fill="url(#zara-pick-body)" transform="rotate(-20 46 127)"/>
+            <rect x="143" y="120" width="22" height="14" rx="4" fill="url(#zara-pick-body)" transform="rotate(20 154 127)"/>
+          </svg>
+        </div>
+        <p class="card-name">Zara the Robot</p>
+        <p class="card-tagline">Energetic robot who loves science and tech!</p>
+      </a>
+      <a href="#" class="card card-finn" id="card-finn" data-character="finn" role="button">
+        <div class="card-svg-wrap">
+          <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="finn-pick-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#e86a40"/>
+                <stop offset="100%" style="stop-color:#D85A30"/>
+              </linearGradient>
+              <linearGradient id="finn-pick-belly" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#fff"/>
+                <stop offset="100%" style="stop-color:#F5C4B3"/>
+              </linearGradient>
+            </defs>
+            <path d="M 70 75 L 55 35 L 85 70 Z" fill="#D85A30"/>
+            <path d="M 130 75 L 145 35 L 115 70 Z" fill="#D85A30"/>
+            <ellipse cx="100" cy="95" rx="45" ry="42" fill="url(#finn-pick-body)"/>
+            <ellipse cx="100" cy="105" rx="28" ry="25" fill="url(#finn-pick-belly)"/>
+            <ellipse cx="82" cy="88" rx="8" ry="10" fill="#1a1a2e"/>
+            <ellipse cx="118" cy="88" rx="8" ry="10" fill="#1a1a2e"/>
+            <path d="M 88 108 Q 100 118 112 108" stroke="#8b4512" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="100" cy="102" rx="5" ry="4" fill="#5c3317"/>
+            <ellipse cx="100" cy="185" rx="50" ry="45" fill="url(#finn-pick-body)"/>
+            <path d="M 55 165 Q 100 200 145 165 L 145 210 Q 100 245 55 210 Z" fill="url(#finn-pick-belly)"/>
+          </svg>
+        </div>
+        <p class="card-name">Finn the Fox</p>
+        <p class="card-tagline">Wise fox who teaches through fun stories!</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = 'kidtutor_setup';
+
+      var topicEl = document.getElementById('topic-text');
+      var topicBadge = document.getElementById('topic-badge');
+      var cardZara = document.getElementById('card-zara');
+      var cardFinn = document.getElementById('card-finn');
+
+      // Show topic from localStorage
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        var setup = raw ? JSON.parse(raw) : null;
+        var topic = (setup && setup.topic) ? setup.topic : 'something awesome';
+        topicEl.textContent = topic;
+      } catch (e) {
+        topicEl.textContent = 'something awesome';
+      }
+
+      function pickCharacter(character) {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          var setup = raw ? JSON.parse(raw) : {};
+          setup.character = character;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(setup));
+          window.location.href = 'lesson.html';
+        } catch (e) {
+          console.error('Could not save character', e);
+        }
+      }
+
+      cardZara.addEventListener('click', function (e) {
+        e.preventDefault();
+        pickCharacter('zara');
+      });
+      cardFinn.addEventListener('click', function (e) {
+        e.preventDefault();
+        pickCharacter('finn');
+      });
+    })();
+  </script>
+</body>
+</html>
