@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KidTutor Live — Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Nunito', 'Comic Sans MS', sans-serif;
+      color: #e8e8f0;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    /* Logo / title */
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo h1 {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(135deg, #e8e8f0 0%, #b8b8d0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    .logo .tagline {
+      font-size: 0.95rem;
+      color: #6b6b8a;
+      margin-top: 0.35rem;
+    }
+
+    /* Grade selector */
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #a0a0b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
+    .grade-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .grade-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 0.9rem 1.25rem;
+      border-radius: 14px;
+      border: 2px solid #4a4e8c;
+      background: #2d2d44;
+      color: #e8e8f0;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .grade-btn:hover {
+      border-color: #7f77dd;
+      background: #3d3d5c;
+      transform: translateY(-2px);
+    }
+    .grade-btn.selected {
+      border-color: #7f77dd;
+      background: linear-gradient(145deg, #4a4e8c 0%, #3d4180 100%);
+      box-shadow: 0 0 20px rgba(127, 119, 221, 0.4);
+    }
+
+    /* Category grid */
+    .categories {
+      margin-bottom: 1.75rem;
+    }
+    .category-block {
+      margin-bottom: 1.25rem;
+    }
+    .category-block:last-child { margin-bottom: 0; }
+    .category-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #7f77dd;
+      margin-bottom: 0.5rem;
+      padding-left: 2px;
+    }
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.6rem;
+    }
+    .tile {
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      border: 2px solid #4a4e8c;
+      background: #2d2d44;
+      color: #e8e8f0;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.12s, box-shadow 0.2s;
+    }
+    .tile:hover {
+      border-color: #7f77dd;
+      background: #3d3d5c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+    .tile:active { transform: translateY(0); }
+
+    /* Free text input */
+    .text-input-wrap {
+      margin-bottom: 1.75rem;
+    }
+    .text-input-wrap input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border-radius: 14px;
+      border: 2px solid #4a4e8c;
+      background: #2d2d44;
+      color: #e8e8f0;
+      font-family: inherit;
+      font-size: 1.05rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .text-input-wrap input::placeholder {
+      color: #6b6b8a;
+    }
+    .text-input-wrap input:focus {
+      outline: none;
+      border-color: #7f77dd;
+      box-shadow: 0 0 0 3px rgba(127, 119, 221, 0.25);
+    }
+
+    /* Start button */
+    .start-wrap {
+      text-align: center;
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 4px 24px rgba(127, 119, 221, 0.5); }
+      50% { box-shadow: 0 6px 32px rgba(127, 119, 221, 0.7); }
+    }
+    .start-btn {
+      display: inline-block;
+      padding: 1rem 3rem;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(145deg, #7f77dd 0%, #6b63c7 100%);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1.25rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(127, 119, 221, 0.5);
+      transition: transform 0.15s, box-shadow 0.2s;
+      animation: glow 2.5s ease-in-out infinite;
+    }
+    .start-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 32px rgba(127, 119, 221, 0.6);
+    }
+    .start-btn:active { transform: scale(0.98); }
+    .start-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="logo">
+      <h1>KidTutor Live</h1>
+      <p class="tagline">Pick a topic and grade — then let your kid choose their tutor.</p>
+    </header>
+
+    <section class="grade-section">
+      <p class="section-label">Grade level</p>
+      <div class="grade-row">
+        <button type="button" class="grade-btn" data-grade="k-2">K–2</button>
+        <button type="button" class="grade-btn" data-grade="grade3-5">Grade 3–5</button>
+        <button type="button" class="grade-btn" data-grade="grade6-8">Grade 6–8</button>
+      </div>
+    </section>
+
+    <section class="categories">
+      <p class="section-label">Topic</p>
+      <div class="category-block">
+        <p class="category-name">Math</p>
+        <div class="tile-grid">
+          <button type="button" class="tile" data-topic="Fractions">Fractions</button>
+          <button type="button" class="tile" data-topic="Multiplication">Multiplication</button>
+          <button type="button" class="tile" data-topic="Geometry">Geometry</button>
+          <button type="button" class="tile" data-topic="Percentages">Percentages</button>
+        </div>
+      </div>
+      <div class="category-block">
+        <p class="category-name">Science</p>
+        <div class="tile-grid">
+          <button type="button" class="tile" data-topic="Planets">Planets</button>
+          <button type="button" class="tile" data-topic="Volcanoes">Volcanoes</button>
+          <button type="button" class="tile" data-topic="Human Body">Human Body</button>
+          <button type="button" class="tile" data-topic="Food Chains">Food Chains</button>
+        </div>
+      </div>
+      <div class="category-block">
+        <p class="category-name">History</p>
+        <div class="tile-grid">
+          <button type="button" class="tile" data-topic="Ancient Egypt">Ancient Egypt</button>
+          <button type="button" class="tile" data-topic="World War II">World War II</button>
+          <button type="button" class="tile" data-topic="Space Race">Space Race</button>
+        </div>
+      </div>
+      <div class="category-block">
+        <p class="category-name">Nature</p>
+        <div class="tile-grid">
+          <button type="button" class="tile" data-topic="Weather">Weather</button>
+          <button type="button" class="tile" data-topic="Rainforests">Rainforests</button>
+          <button type="button" class="tile" data-topic="Ocean Life">Ocean Life</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="text-input-wrap">
+      <input type="text" id="topic-input" placeholder="Or type any topic..." autocomplete="off" />
+    </div>
+
+    <div class="start-wrap">
+      <button type="button" class="start-btn" id="start-btn">Start Lesson</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = 'kidtutor_setup';
+
+      var gradeButtons = document.querySelectorAll('.grade-btn');
+      var tiles = document.querySelectorAll('.tile');
+      var topicInput = document.getElementById('topic-input');
+      var startBtn = document.getElementById('start-btn');
+
+      var selectedGrade = null;
+
+      function selectGrade(grade) {
+        selectedGrade = grade;
+        gradeButtons.forEach(function (btn) {
+          btn.classList.toggle('selected', btn.getAttribute('data-grade') === grade);
+        });
+      }
+
+      gradeButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          selectGrade(btn.getAttribute('data-grade'));
+        });
+      });
+
+      tiles.forEach(function (tile) {
+        tile.addEventListener('click', function () {
+          topicInput.value = tile.getAttribute('data-topic');
+          topicInput.focus();
+        });
+      });
+
+      function getTopic() {
+        var value = (topicInput.value || '').trim();
+        return value || null;
+      }
+
+      startBtn.addEventListener('click', function () {
+        var topic = getTopic();
+        if (!topic) {
+          topicInput.placeholder = 'Type or pick a topic above!';
+          topicInput.focus();
+          return;
+        }
+        if (!selectedGrade) {
+          topicInput.placeholder = 'Pick a grade level first.';
+          return;
+        }
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            topic: topic,
+            grade: selectedGrade
+          }));
+          window.location.href = 'pick.html';
+        } catch (e) {
+          topicInput.placeholder = 'Could not save — try again.';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
